@@ -210,7 +210,7 @@ PYCSW = {
     'manager': {
         'transactions': 'true',
         'allowed_ips': '127.0.0.1,192.168.0.*',
-        #'csw_harvest_pagesize=10',
+        # 'csw_harvest_pagesize=10',
     },
     'repository': {
         'source': 'HHypermap',
@@ -243,4 +243,3 @@ PYCSW = {
         'contact_role': 'pointOfContact'
     }
 }
-

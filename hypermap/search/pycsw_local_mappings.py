@@ -60,4 +60,3 @@ MD_CORE_MODEL = {
         'pycsw:Links': 'download_links',
     }
 }
-

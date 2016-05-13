@@ -25,7 +25,6 @@ from arcrest import MapService as ArcMapService, ImageService as ArcImageService
 
 from enums import SERVICE_TYPES, DATE_TYPES
 from tasks import update_endpoints, check_service, check_layer, index_layer
-#from utils import bbox2wktpolygon
 
 
 def get_parsed_date(sdate):
@@ -238,22 +237,24 @@ class Service(Resource):
                 if len(title) == 0:
                     title = get_esri_service_name(self.url)
                 srs = esri.fullExtent.spatialReference.wkid
-                wkt_geometry = bbox2wktpolygon([esri.fullExtent.xmin,
-                                                esri.fullExtent.ymin,
-                                                esri.fullExtent.xmax,
-                                                esri.fullExtent.ymax
-                                               ])
+                wkt_geometry = bbox2wktpolygon([
+                    esri.fullExtent.xmin,
+                    esri.fullExtent.ymin,
+                    esri.fullExtent.xmax,
+                    esri.fullExtent.ymax
+                ])
             if self.type == 'ESRI:ArcGIS:ImageServer':
                 esri = ArcImageService(self.url)
                 title = esri._json_struct['name']
                 if len(title) == 0:
                     title = get_esri_service_name(self.url)
                 srs = esri.fullExtent.spatialReference.wkid
-                wkt_geometry = bbox2wktpolygon([esri.fullExtent.xmin,
-                                                esri.fullExtent.ymin,
-                                                esri.fullExtent.xmax,
-                                                esri.fullExtent.ymax
-                                               ])
+                wkt_geometry = bbox2wktpolygon([
+                    esri.fullExtent.xmin,
+                    esri.fullExtent.ymin,
+                    esri.fullExtent.xmax,
+                    esri.fullExtent.ymax
+                ])
             if self.type == 'WM':
                 urllib2.urlopen(self.url)
                 title = 'Harvard WorldMap'

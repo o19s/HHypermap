@@ -291,7 +291,7 @@ def update_layers_wms(service):
             layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
             links.append([
                 'WWW:LINK',
-                 settings.SITE_URL.rstrip('/') + layer.page_url
+                settings.SITE_URL.rstrip('/') + layer.page_url
             ])
             # bbox
             bbox = list(ows_layer.boundingBoxWGS84 or (-179.0, -89.0, 179.0, 89.0))
@@ -348,7 +348,7 @@ def update_layers_wmts(service):
             layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
             links.append([
                 'WWW:LINK',
-                 settings.SITE_URL.rstrip('/') + layer.page_url
+                settings.SITE_URL.rstrip('/') + layer.page_url
             ])
             bbox = list(ows_layer.boundingBoxWGS84 or (-179.0, -89.0, 179.0, 89.0))
             layer.bbox_x0 = bbox[0]
@@ -556,7 +556,7 @@ def update_layers_esri_mapserver(service):
                 layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
                 links.append([
                     'WWW:LINK',
-                     settings.SITE_URL.rstrip('/') + layer.page_url
+                    settings.SITE_URL.rstrip('/') + layer.page_url
                 ])
                 # set a default srs
                 srs = 4326

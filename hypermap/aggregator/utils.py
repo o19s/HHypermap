@@ -466,7 +466,7 @@ def update_layers_warper(service):
         params = {'field': 'title', 'query': '', 'show_warped': '1', 'format': 'json', 'page': i}
         request = requests.get(service.url, headers=headers, params=params)
         records = json.loads(request.content)
-        print 'Fetched %s' + request.url
+        print 'Fetched %s' % request.url
         layers = records['items']
         for layer in layers:
             name = layer['id']

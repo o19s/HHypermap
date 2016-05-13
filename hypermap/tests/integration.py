@@ -5,7 +5,9 @@ import time
 from django.conf import settings
 from django.test import LiveServerTestCase as TestCase
 
-from aggregator.models import Service, Layer
+from owslib.csw import CatalogueServiceWeb
+
+from aggregator.models import Layer, Service
 import aggregator.tests.mocks.wms
 import aggregator.tests.mocks.warper
 import aggregator.tests.mocks.worldmap
@@ -70,3 +72,46 @@ class SolrTest(TestCase):
         nlayers_valid_coordinates = sum(layer.has_valid_bbox() for layer in Layer.objects.all())
         results = self.solr.search(q='bbox:*')
         self.assertEqual(results.hits, nlayers_valid_coordinates)
+
+
+class CSWTest(TestCase):
+    """
+    Test CSW endpoint
+    """
+
+    def setUp(self):
+        """setup records and CSW"""
+        create_wms_service()
+        create_warper_service()
+        create_wm_service()
+
+        self.csw = CatalogueServiceWeb(settings.PYCSW['server']['url'])
+
+    def tearDown(self):
+        """shutdown endpoint and clean out records"""
+
+        Service.objects.all().delete()
+
+    def test_csw_server_metadata(self):
+        """verify that HHypermap's CSW works properly"""
+
+        # test that OGC:CSW URLs are identical to what is defined in settings
+        for op in self.csw.operations:
+            for method in op.methods:
+                self.assertEqual(settings.PYCSW['server']['url'], method['url'], 'Expected URL equality')
+
+        # test that OGC:CSW 2.0.2 is supported
+        self.assertEqual(self.csw.version, '2.0.2', 'Expected "2.0.2" as a supported version')
+
+        # test that transactions are supported
+        transaction = self.csw.get_operation_by_name('Transaction')
+        harvest = self.csw.get_operation_by_name('Harvest')
+
+        # test that HHypermap Service types are Harvestable
+        self.assertIn('http://www.opengis.net/wms', harvest.parameters['ResourceType']['values'])
+        self.assertIn('http://www.opengis.net/wmts/1.0', transaction.parameters['TransactionSchemas']['values'])
+
+    def test_csw_search(self):
+        """perform simple searches"""
+
+        self.csw.getrecords2()

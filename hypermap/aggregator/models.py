@@ -733,7 +733,7 @@ def gen_anytext(*args):
         if term is not None:
             if isinstance(term, list):
                 for term2 in term:
-                    if term is not None:
+                    if term2 is not None:
                         bag.append(term2)
             else:
                 bag.append(term)

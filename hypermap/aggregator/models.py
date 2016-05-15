@@ -226,7 +226,7 @@ class Service(Resource):
                 title = ows.identification.title
                 abstract = ows.identification.abstract
                 keywords = ows.identification.keywords
-            if self.type == 'OGC:TMS':
+            if self.type == 'OSGeo:TMS':
                 ows = TileMapService(self.url)
                 title = ows.identification.title
                 abstract = ows.identification.abstract

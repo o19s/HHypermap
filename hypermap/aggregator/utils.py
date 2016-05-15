@@ -84,7 +84,7 @@ def create_services_from_endpoint(url):
     if not detected:
         try:
             service = TileMapService(endpoint, timeout=10)
-            service_type = 'OGC:TMS'
+            service_type = 'OSGeo:TMS'
             detected = True
             create_service_from_endpoint(
                 endpoint,

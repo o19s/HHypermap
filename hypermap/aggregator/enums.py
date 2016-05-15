@@ -2,7 +2,7 @@ SERVICE_TYPES = (
     ('WM', 'Harvard WorldMap'),
     ('OGC:WMS', 'Web Map Service (WMS)'),
     ('OGC:WMTS', 'Web Map Tile Service (WMTS)'),
-    ('OGC:TMS', 'Tile Map Service (TMS)'),
+    ('OSGeo:TMS', 'Tile Map Service (TMS)'),
     ('ESRI:ArcGIS:MapServer', 'ArcGIS REST MapServer'),
     ('ESRI:ArcGIS:ImageServer', 'ArcGIS REST ImageServer'),
     ('WARPER', 'Mapwarper'),

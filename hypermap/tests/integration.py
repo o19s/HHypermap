@@ -81,9 +81,6 @@ class CSWTest(TestCase):
 
     def setUp(self):
         """setup records and CSW"""
-        create_wms_service()
-        create_warper_service()
-        create_wm_service()
 
         self.csw = CatalogueServiceWeb(settings.PYCSW['server']['url'])
 
@@ -92,7 +89,7 @@ class CSWTest(TestCase):
 
         Service.objects.all().delete()
 
-    def test_csw_server_metadata(self):
+    def test_capabilities(self):
         """verify that HHypermap's CSW works properly"""
 
         # test that OGC:CSW URLs are identical to what is defined in settings
@@ -108,10 +105,7 @@ class CSWTest(TestCase):
         harvest = self.csw.get_operation_by_name('Harvest')
 
         # test that HHypermap Service types are Harvestable
-        self.assertIn('http://www.opengis.net/wms', harvest.parameters['ResourceType']['values'])
-        self.assertIn('http://www.opengis.net/wmts/1.0', transaction.parameters['TransactionSchemas']['values'])
-
-    def test_csw_search(self):
-        """perform simple searches"""
-
-        self.csw.getrecords2()
+        for restype in ['http://www.opengis.net/wms', 'http://www.opengis.net/wmts/1.0',
+                        'urn:x-esri:serviceType:ArcGIS:MapServer', 'urn:x-esri:serviceType:ArcGIS:ImageServer']:
+            self.assertIn(restype, harvest.parameters['ResourceType']['values'])
+            self.assertIn(restype, transaction.parameters['TransactionSchemas']['values'])

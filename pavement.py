@@ -27,18 +27,18 @@ def run_integration_tests():
     """
     Executes the entire test suite.
     """
-    call_task('start_server')
+    call_task('start')
     sh('python hypermap/manage.py test tests.integration --settings=settings.test --failfast')
-    call_task('stop_server')
+    call_task('stop')
 
 
 @task
-def start_server():
+def start():
     sh('python hypermap/manage.py runserver 0.0.0.0:8000 &')
 
 
 @task
-def stop_server():
+def stop():
     kill_process('python', 'hypermap/manage.py')
 
 

@@ -9,14 +9,16 @@
 </div>
 
 {% if user.is_superuser %}
-  {% include "aggregator/publish.html" with csw_resourcetype=service.csw_resourcetype csw_source=service.url %}
+  {% include "aggregator/publish.html" with csw_resourcetype=service.csw_resourcetype csw_source=service.url publish_type='Service' %}
 {% endif %}
 
 <div class="row">
   <div class="col-md-6">
+    {% if user.is_superuser %}
     <ul>
       <button type="button" class="btn btn-success btn-circle btn nohover" data-toggle="modal" data-target="#publish-modal">Publish</button>
     </ul>
+    {% endif %}
     <ul>
       <li><a href="{% url 'service_checks' service.id %}">See full check stats</a></li>
     </ul>

@@ -5,7 +5,8 @@
 import os
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
+from django.template import loader, RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from pycsw import server
@@ -14,6 +15,22 @@ from pycsw import server
 @csrf_exempt
 def csw_global_dispatch(request):
     """pycsw wrapper"""
+
+# TODO: add logic for authentication/authorization
+#
+#    msg = None
+#    if any(word in request.body for word in ['Harvest ', 'Transaction ']):
+#        if not SOME_AUTHENTICATED_TEST:
+#            msg = 'Not authenticated'
+#        if not SOME_AUTHORIZATION_TEST:
+#            msg = 'Not authorized'
+#
+#        if msg is not None:
+#            template = loader.get_template('search/csw-2.0.2-exception.xml')
+#            context = RequestContext(request, {
+#                'exception_text': msg
+#            })
+#            return HttpResponseForbidden(template.render(context), content_type='application/xml')
 
     env = request.META.copy()
     env.update({'local.app_root': os.path.dirname(__file__),

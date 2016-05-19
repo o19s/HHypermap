@@ -21,7 +21,6 @@ $('#publish-resource').click(function(event) {
         data: harvest_request,
         dataType: 'text',
         success: function(xml) {
-            alert(xml);
             console.log(xml);
         }
     });

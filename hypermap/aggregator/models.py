@@ -23,7 +23,7 @@ from owslib.wms import WebMapService
 from owslib.wmts import WebMapTileService
 from arcrest import MapService as ArcMapService, ImageService as ArcImageService
 
-from enums import SERVICE_TYPES, DATE_TYPES
+from enums import CSW_RESOURCE_TYPES, SERVICE_TYPES, DATE_TYPES
 from tasks import update_endpoints, check_service, check_layer, index_layer
 
 
@@ -88,6 +88,10 @@ class Resource(PolymorphicModel):
             if not self.last_updated.utcoffset:
                 return '%sZ' % iso8601
             return iso8601
+
+    @property
+    def csw_resourcetype(self):
+        return CSW_RESOURCE_TYPES[self.type]
 
     @property
     def keywords_csv(self):

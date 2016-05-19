@@ -1,0 +1,31 @@
+<div class="modal fade" id="publish-modal" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Publish Service</h4>
+      </div>
+      <div class="modal-body">
+        <form role="form">
+          <input type="hidden" id="csw-resourcetype" name="csw-resourcetype" value="{{ service.csw_resourcetype }}"/>
+          <div class="form-group">
+            <label for="csw-url">CSW Endpoint:</label>
+            <input type="text" class="form-control" id="csw-url">
+          </div>
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="username" class="form-control" id="username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" id="publish-resource" class="btn btn-default">Submit</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

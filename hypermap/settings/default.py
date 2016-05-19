@@ -209,7 +209,7 @@ PYCSW = {
     },
     'manager': {
         'transactions': 'true',
-        'allowed_ips': '127.0.0.1,192.168.0.*',
+        'allowed_ips': '127.0.0.1,192.168.0.*,205.211.133.128',
         # 'csw_harvest_pagesize=10',
     },
     'repository': {

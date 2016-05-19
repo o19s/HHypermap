@@ -10,11 +10,10 @@ function gen_harvest_request(resourcetype, source) {
 
 $('#publish-resource').click(function(event) {
     var resourcetype = $('#csw-resourcetype').val();
-    var source = $('#resource-url').attr('href');
+    var source = $('#csw-source').val();
     var csw_url = $('#csw-url').val();
 
     var harvest_request = gen_harvest_request(resourcetype, source);
-
     $.ajax({
         type: 'post',
         crossDomain: true,
@@ -23,6 +22,7 @@ $('#publish-resource').click(function(event) {
         dataType: 'text',
         success: function(xml) {
             alert(xml);
+            console.log(xml);
         }
     });
 });

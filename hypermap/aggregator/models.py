@@ -699,6 +699,7 @@ def create_metadata_record(**kwargs):
 
     etree.SubElement(e, nspath_eval('dc:identifier', nsmap)).text = kwargs['identifier']
     etree.SubElement(e, nspath_eval('dc:title', nsmap)).text = kwargs['title']
+    etree.SubElement(e, nspath_eval('dct:alternative', nsmap)).text = kwargs['alternative']
     etree.SubElement(e, nspath_eval('dct:modified', nsmap)).text = modified
     etree.SubElement(e, nspath_eval('dct:abstract', nsmap)).text = kwargs['abstract']
     etree.SubElement(e, nspath_eval('dc:type', nsmap)).text = kwargs['type']

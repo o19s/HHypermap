@@ -316,6 +316,7 @@ def update_layers_wms(service):
                 type=layer.csw_type,
                 relation=service.id_string,
                 title=ows_layer.title,
+                alternative=ows_layer.name,
                 abstract=ows_layer.abstract,
                 keywords=ows_layer.keywords,
                 wkt_geometry=layer.wkt_geometry

@@ -7,8 +7,10 @@
       </div>
       <div class="modal-body">
         <form role="form">
+          <input type="hidden" id="csw-publishtype" name="csw-publishtype" value="{{ publish_type }}"/>
           <input type="hidden" id="csw-source" name="csw-source" value="{{ csw_source }}"/>
           <input type="hidden" id="csw-resourcetype" name="csw-resourcetype" value="{{ csw_resourcetype }}"/>
+          <input type="hidden" id="csw-xml" name="csw-xml" value="{{ csw_xml }}"/>
           <div class="form-group">
             <label for="csw-url">CSW Endpoint:</label>
             <input type="text" class="form-control" id="csw-url">

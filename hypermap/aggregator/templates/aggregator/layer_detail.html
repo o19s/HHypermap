@@ -9,7 +9,7 @@
 </div>
 
 {% if user.is_superuser %}
-  {% include "aggregator/publish.html" with csw_resourcetype=layer.csw_resourcetype csw_source=layer.url publish_type='Layer' %}
+  {% include "aggregator/publish.html" with csw_resourcetype=layer.csw_resourcetype csw_source=layer.url publish_type='Layer' csw_xml=layer.xml %}
 {% endif %}
 
 <div class="row">

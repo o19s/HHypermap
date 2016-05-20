@@ -30,7 +30,7 @@ def csw_global_dispatch(request):
 #            context = RequestContext(request, {
 #                'exception_text': msg
 #            })
-#            return HttpResponseForbidden(template.render(context), content_type='application/xml')
+#            response = HttpResponseForbidden(template.render(context), content_type='application/xml')
 
     env = request.META.copy()
     env.update({'local.app_root': os.path.dirname(__file__),
@@ -48,4 +48,7 @@ def csw_global_dispatch(request):
     if isinstance(content, list):  # pycsw 2.0+
         content = content[1]
 
-    return HttpResponse(content, content_type=csw.contenttype)
+    response = HttpResponse(content, content_type=csw.contenttype)
+
+    response['Access-Control-Allow-Origin'] = '*'
+    return response

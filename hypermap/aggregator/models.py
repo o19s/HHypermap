@@ -203,7 +203,7 @@ class Service(Resource):
         """
         Check for availability of a service and provide run metrics.
         """
-        from utils import get_esri_service_name
+        from utils import get_esri_extent, get_esri_service_name
         success = True
         start_time = datetime.datetime.utcnow()
         message = ''
@@ -237,27 +237,27 @@ class Service(Resource):
                 keywords = ows.identification.keywords
             if self.type == 'ESRI:ArcGIS:MapServer':
                 esri = ArcMapService(self.url)
+                extent, srs = get_esri_extent(esri)
                 title = esri.mapName
                 if len(title) == 0:
                     title = get_esri_service_name(self.url)
-                srs = esri.fullExtent.spatialReference.wkid
                 wkt_geometry = bbox2wktpolygon([
-                    esri.fullExtent.xmin,
-                    esri.fullExtent.ymin,
-                    esri.fullExtent.xmax,
-                    esri.fullExtent.ymax
+                    extent['xmin'],
+                    extent['ymin'],
+                    extent['xmax'],
+                    extent['ymax']
                 ])
             if self.type == 'ESRI:ArcGIS:ImageServer':
                 esri = ArcImageService(self.url)
+                extent, srs = get_esri_extent(esri)
                 title = esri._json_struct['name']
                 if len(title) == 0:
                     title = get_esri_service_name(self.url)
-                srs = esri.fullExtent.spatialReference.wkid
                 wkt_geometry = bbox2wktpolygon([
-                    esri.fullExtent.xmin,
-                    esri.fullExtent.ymin,
-                    esri.fullExtent.xmax,
-                    esri.fullExtent.ymax
+                    extent['xmin'],
+                    extent['ymin'],
+                    extent['xmax'],
+                    extent['ymax']
                 ])
             if self.type == 'WM':
                 urllib2.urlopen(self.url)
@@ -699,7 +699,8 @@ def create_metadata_record(**kwargs):
 
     etree.SubElement(e, nspath_eval('dc:identifier', nsmap)).text = kwargs['identifier']
     etree.SubElement(e, nspath_eval('dc:title', nsmap)).text = kwargs['title']
-    etree.SubElement(e, nspath_eval('dct:alternative', nsmap)).text = kwargs['alternative']
+    if 'alternative' in kwargs:
+        etree.SubElement(e, nspath_eval('dct:alternative', nsmap)).text = kwargs['alternative']
     etree.SubElement(e, nspath_eval('dct:modified', nsmap)).text = modified
     etree.SubElement(e, nspath_eval('dct:abstract', nsmap)).text = kwargs['abstract']
     etree.SubElement(e, nspath_eval('dc:type', nsmap)).text = kwargs['type']

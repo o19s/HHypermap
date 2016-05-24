@@ -215,6 +215,27 @@ def get_esri_service_name(url):
         return result.group(1)
 
 
+def get_esri_extent(esriobj):
+    """
+    Get the extent of an ESRI resource
+    """
+
+    extent = None
+    srs = None
+
+    if 'fullExtent' in esriobj._json_struct:
+        extent = esriobj._json_struct['fullExtent']
+    if 'extent' in esriobj._json_struct:
+        extent = esriobj._json_struct['extent']
+
+    try:
+        srs = extent['spatialReference']['wkid']
+    except KeyError as err:
+        pass  # TODO: logging
+
+    return [extent, srs]
+
+
 def flip_coordinates(c1, c2):
     if c1 > c2:
         print 'Flipping coordinates %s, %s' % (c1, c2)
@@ -365,6 +386,7 @@ def update_layers_wmts(service):
                 type=layer.csw_type,
                 relation=service.id_string,
                 title=ows_layer.title,
+                alternative=ows_layer.name,
                 abstract=layer.abstract,
                 keywords=ows_layer.keywords,
                 wkt_geometry=layer.wkt_geometry
@@ -593,6 +615,7 @@ def update_layers_esri_mapserver(service):
                     type=layer.csw_type,
                     relation=service.id_string,
                     title=layer.title,
+                    alternative=layer.title,
                     abstract=layer.abstract,
                     wkt_geometry=layer.wkt_geometry,
                     srs=srs
@@ -623,7 +646,7 @@ def update_layers_esri_imageserver(service):
         layer.bbox_x1 = str(obj['extent']['xmax'])
         layer.bbox_y1 = str(obj['extent']['ymax'])
         layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
-        srs = obj['spatialReference']['wkid']
+        srs = obj['extent']['spatialReference']['wkid']
         links.append([
             'WWW:LINK',
             settings.SITE_URL.rstrip('/') + layer.page_url
@@ -637,6 +660,7 @@ def update_layers_esri_imageserver(service):
             type=layer.csw_type,
             relation=service.id_string,
             title=layer.title,
+            alternative=layer.title,
             abstract=layer.abstract,
             wkt_geometry=layer.wkt_geometry,
             srs=srs

@@ -8,7 +8,7 @@ BASE_PORT = os.getenv('BASE_PORT', '8000')
 
 SITE_URL = 'http://%s:%s' % (BASE_URL, BASE_PORT)
 
-ALLOWED_HOSTS = [BASE_URL,]
+ALLOWED_HOSTS = [BASE_URL, ]
 
 CELERYBEAT_SCHEDULE = {
     'Check All Services': {
@@ -24,7 +24,7 @@ if CLOUD_FOUNDRY is not None:
     decoded_config = json.loads(vcap_service_config)
 
     vcap_app_config = os.environ.get('VCAP_APPLICATION')
-    #TODO: Get from environment and don't hardcode
+    # TODO: Get from environment and don't hardcode
     DATABASES = {'default': dj_database_url.config()}
 
     # use redis

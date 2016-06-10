@@ -7,7 +7,7 @@ def reset_db():
     """
     Reset the Django db, keeping the admin user
     """
-    sh("python manage.py sqlclear aggregator | python hypermap/manage.py dbshell")
+    sh("python manage.py sqlclear aggregator | python manage.py dbshell")
     sh("python manage.py syncdb")
     sh("python manage.py loaddata hypermap/aggregator/fixtures/aggregator.json")
 

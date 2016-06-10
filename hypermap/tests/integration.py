@@ -15,7 +15,7 @@ from hypermap.aggregator.tasks import index_all_layers
 
 
 
-@with_httmock(aggregator.tests.mocks.wms.resource_get)
+@with_httmock(hypermap.aggregator.tests.mocks.wms.resource_get)
 def create_wms_service():
     service = Service(
         type='OGC:WMS',
@@ -24,7 +24,7 @@ def create_wms_service():
     service.save()
 
 
-@with_httmock(aggregator.tests.mocks.warper.resource_get)
+@with_httmock(hypermap.aggregator.tests.mocks.warper.resource_get)
 def create_warper_service():
     service = Service(
         type='WARPER',
@@ -33,7 +33,7 @@ def create_warper_service():
     service.save()
 
 
-@with_httmock(aggregator.tests.mocks.worldmap.resource_get)
+@with_httmock(hypermap.aggregator.tests.mocks.worldmap.resource_get)
 def create_wm_service():
     service = Service(
         type='WM',
@@ -49,7 +49,7 @@ class SolrTest(TestCase):
     Later we will programmatically create it and destroy it after testing.
     """
 
-    @with_httmock(aggregator.tests.mocks.wms.resource_get)
+    @with_httmock(hypermap.aggregator.tests.mocks.wms.resource_get)
     def setUp(self):
         solr_url = settings.SEARCH_URL
         self.solr = pysolr.Solr(solr_url, timeout=60)

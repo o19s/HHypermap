@@ -1,6 +1,6 @@
 import dj_database_url
 import json
-from .default import *
+from .default import *  # noqa
 
 #####
 BASE_URL = os.getenv('BASE_URL', 'localhost')

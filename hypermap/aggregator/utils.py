@@ -1,4 +1,5 @@
 import urllib2
+import logging
 import requests
 import re
 import sys
@@ -21,6 +22,8 @@ from .models import (bbox2wktpolygon, create_metadata_record, gen_anytext, Layer
                      LayerDate, LayerWM, SpatialReferenceSystem)
 
 from hypermap.dynasty.utils import get_mined_dates
+
+LOGGER = logging.getLogger(__name__)
 
 
 def create_service_from_endpoint(endpoint, service_type, title=None, abstract=None):
@@ -231,7 +234,7 @@ def get_esri_extent(esriobj):
     try:
         srs = extent['spatialReference']['wkid']
     except KeyError as err:
-        pass  # TODO: logging
+        LOGGER.error(err)
 
     return [extent, srs]
 

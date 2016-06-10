@@ -52,7 +52,6 @@ def csw_global_dispatch(request):
     if isinstance(content, list):  # pycsw 2.0+
         content = content[1]
 
-<<<<<<< HEAD
     return HttpResponse(content, content_type=csw.contenttype)
 
 
@@ -78,8 +77,6 @@ def csw_global_dispatch_by_catalog(request, catalog_slug):
     if isinstance(content, list):  # pycsw 2.0+
         content = content[1]
 
-    return HttpResponse(content, content_type=csw.contenttype)
-=======
     response = HttpResponse(content, content_type=csw.contenttype)
 
     response['Access-Control-Allow-Origin'] = '*'

@@ -59,7 +59,7 @@ def csw_global_dispatch(request):
 def csw_global_dispatch_by_catalog(request, catalog_slug):
     """pycsw wrapper"""
 
-    catalog = get_object_or_404(Catalog, slug=catalog_slug)
+    # catalog = get_object_or_404(Catalog, slug=catalog_slug)
 
     env = request.META.copy()
     env.update({'local.app_root': os.path.dirname(__file__),

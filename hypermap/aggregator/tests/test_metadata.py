@@ -11,13 +11,13 @@ from lxml import etree
 
 from owslib.csw import CswRecord
 
-from aggregator.models import gen_anytext, Layer, Service
-import aggregator.tests.mocks.wms
-import aggregator.tests.mocks.warper
-import aggregator.tests.mocks.worldmap
+from hypermap.aggregator.models import gen_anytext, Layer, Service
+import hypermap.aggregator.tests.mocks.wms
+import hypermap.aggregator.tests.mocks.warper
+import hypermap.aggregator.tests.mocks.worldmap
 
 
-@with_httmock(aggregator.tests.mocks.wms.resource_get)
+@with_httmock(hypermap.aggregator.tests.mocks.wms.resource_get)
 def create_wms_service():
     service = Service(
         type='OGC:WMS',
@@ -26,7 +26,7 @@ def create_wms_service():
     service.save()
 
 
-@with_httmock(aggregator.tests.mocks.warper.resource_get)
+@with_httmock(hypermap.aggregator.tests.mocks.warper.resource_get)
 def create_warper_service():
     service = Service(
         type='WARPER',
@@ -35,7 +35,7 @@ def create_warper_service():
     service.save()
 
 
-@with_httmock(aggregator.tests.mocks.worldmap.resource_get)
+@with_httmock(hypermap.aggregator.tests.mocks.worldmap.resource_get)
 def create_wm_service():
     service = Service(
         type='WM',

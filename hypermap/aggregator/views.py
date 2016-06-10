@@ -156,7 +156,7 @@ def celery_monitor(request):
     """
     A raw celery monitor to figure out which processes are active and reserved.
     """
-    inspect = celeryapp.control.inspect()
+    inspect = celeryapp.app.control.inspect()
     active_json = inspect.active()
     reserved_json = inspect.reserved()
     active_tasks = []

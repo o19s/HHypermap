@@ -1,10 +1,7 @@
 import sys
-import pyelasticsearch
-import requests
 import logging
 import math
 import json
-import datetime
 
 from urlparse import urlparse
 from django.conf import settings
@@ -15,6 +12,7 @@ from elasticsearch import Elasticsearch
 from hypermap.aggregator.utils import mercator_to_llbbox
 
 from hypermap.aggregator.solr import get_date
+
 
 class ESHypermap(object):
 
@@ -108,7 +106,7 @@ class ESHypermap(object):
                 else:
                     originator = domain
                 # we need to remove the exising index in case there is already one
-                #ESHypermap.es.delete('hypermap', 'layer', layer.id)
+                # ESHypermap.es.delete('hypermap', 'layer', layer.id)
                 # now we add the index
                 es_record = {
                                 "LayerId": str(layer.id),
@@ -125,7 +123,7 @@ class ESHypermap(object):
                                 "Availability": "Online",
                                 "Location": '{"layerInfoPage": "' + layer.get_absolute_url() + '"}',
                                 "Abstract": abstract,
-                                #"SrsProjectionCode": layer.srs.values_list('code', flat=True),
+                                # "SrsProjectionCode": layer.srs.values_list('code', flat=True),
                                 "MinY": minY,
                                 "MinX": minX,
                                 "MaxY": maxY,
@@ -137,12 +135,12 @@ class ESHypermap(object):
                                 "Area": area,
                                 "bbox": wkt,
                                 "GeoShape": {
-                                  "type" : "polygon",
-                                  "orientation" : "clockwise",
-                                  "coordinates" : [
-                                    [ [minX, minY], [minX, maxY], [maxX, maxY], [maxX, minY], [minX, minY] ]
+                                  "type": "polygon",
+                                  "orientation": "clockwise",
+                                  "coordinates": [
+                                    [[minX, minY], [minX, maxY], [maxX, maxY], [maxX, minY], [minX, minY]]
                                   ]
-                                } ,
+                                },
                                 "DomainName": layer.service.get_domain,
                                 }
 
@@ -161,7 +159,7 @@ class ESHypermap(object):
         except Exception:
             ESHypermap.logger.error(sys.exc_info())
             ESHypermap.logger.error("Elasticsearch: Error saving record for layer with id: %s - %s"
-                                      % (layer.id, sys.exc_info()[1]))
+                                    % (layer.id, sys.exc_info()[1]))
             return False, sys.exc_info()[1]
 
     @staticmethod
@@ -177,16 +175,16 @@ class ESHypermap(object):
         # https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#index-creation
         # http://support.searchly.com/customer/en/portal/questions/16312889-is-automatic-index-creation-disabled-?new=16312889
         mapping = {
-        "mappings":{
-          "layers":{
-            "properties":{
-              "GeoShape": {
-                "type": "geo_shape",
-                "tree": "quadtree",
-                "precision": "1m"
-              }
+            "mappings": {
+                "layers": {
+                    "properties": {
+                        "GeoShape": {
+                            "type": "geo_shape",
+                            "tree": "quadtree",
+                            "precision": "1m"
+                        }
+                    }
+                }
             }
-          }
-         }
         }
         ESHypermap.es.indices.create(ESHypermap.index_name, ignore=[400, 404], body=mapping)

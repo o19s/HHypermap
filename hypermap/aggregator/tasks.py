@@ -80,6 +80,7 @@ def clear_solr():
     solrobject = SolrHypermap()
     solrobject.clear_solr()
 
+
 @shared_task(name="clear_es")
 def clear_es():
     print 'Clearing the ES indexes'

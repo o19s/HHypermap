@@ -34,7 +34,7 @@ def csw_global_dispatch(request):
             context = RequestContext(request, {
                 'exception_text': msg
             })
-            response = HttpResponseForbidden(template.render(context), content_type='application/xml')
+            return HttpResponseForbidden(template.render(context), content_type='application/xml')
 
     env = request.META.copy()
     env.update({'local.app_root': os.path.dirname(__file__),

@@ -160,9 +160,8 @@ def get_mapproxy(layer, seed=False, ignore_warnings=True, renderd=False):
     }
 
     global_config = {
-      'http': { 'ssl_no_cert_checks': True},
+      'http': {'ssl_no_cert_checks': True},
     }
- 
 
     # Start with a sane configuration using MapProxy's defaults
     conf_options = load_default_config()

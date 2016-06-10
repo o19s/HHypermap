@@ -336,6 +336,7 @@ class Catalog(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class Layer(Resource):
     """
     Service represents a remote layer.

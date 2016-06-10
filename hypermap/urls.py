@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from hypermap.proxymap.views import layer_mapproxy, layer_tms
-from hypermap.search.views import csw_global_dispatch
 
 from django.contrib import admin
 admin.autodiscover()

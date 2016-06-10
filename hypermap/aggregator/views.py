@@ -17,6 +17,7 @@ from enums import SERVICE_TYPES
 
 from hypermap import celeryapp
 
+
 def serialize_checks(check_set):
     """
     Serialize a check_set for raphael
@@ -141,7 +142,7 @@ def layer_detail(request, layer_id):
 
     return render(request, 'aggregator/layer_detail.html', {'layer': layer,
                                                             'SEARCH_TYPE': settings.SEARCH_TYPE,
-                                                            'SEARCH_URL': settings.SEARCH_URL })
+                                                            'SEARCH_URL': settings.SEARCH_URL})
 
 
 def layer_checks(request, layer_id):

@@ -18,7 +18,7 @@ from arcrest import Folder as ArcFolder
 from arcrest import MapService as ArcMapService, ImageService as ArcImageService
 
 from .models import (bbox2wktpolygon, create_metadata_record, gen_anytext, Layer,
-                    LayerDate, LayerWM, SpatialReferenceSystem)
+                     LayerDate, LayerWM, SpatialReferenceSystem)
 
 from hypermap.dynasty.utils import get_mined_dates
 

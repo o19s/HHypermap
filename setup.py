@@ -71,6 +71,7 @@ setup(
         'httmock==1.2.5',
         'MapProxy==1.8.1',
         'pyelasticsearch==1.4',
+        'django-celery==3.1.17',
         'nose==1.3.7',
         'OWSLib==0.10.3',
         'Paver==1.2.4',

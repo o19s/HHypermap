@@ -8,8 +8,17 @@
   <h1>Layer details for: {{ layer.title }}</h1>
 </div>
 
+{% if user.is_superuser %}
+  {% include "aggregator/publish.html" with csw_resourcetype=layer.csw_resourcetype csw_source=layer.url publish_type='Layer' csw_xml=layer.xml %}
+{% endif %}
+
 <div class="row">
   <div class="col-md-6">
+    {% if user.is_superuser %}
+    <ul>
+      <button type="button" class="btn btn-success btn-circle btn nohover" data-toggle="modal" data-target="#publish-modal">Publish</button>
+    </ul>
+    {% endif %}
     <ul>
       <li><a href="{% url 'service_detail' layer.service.id %}">Go to service page</a></li>
       <li><a href="map/demo/">Go to demo page</a></li>

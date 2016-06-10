@@ -24,9 +24,8 @@ from owslib.wms import WebMapService
 from owslib.wmts import WebMapTileService
 from arcrest import MapService as ArcMapService, ImageService as ArcImageService
 
-from enums import SERVICE_TYPES, DATE_TYPES
+from enums import CSW_RESOURCE_TYPES, SERVICE_TYPES, DATE_TYPES
 from tasks import update_endpoints, check_service, check_layer, index_layer
-#from utils import bbox2wktpolygon
 
 
 def get_parsed_date(sdate):
@@ -90,6 +89,10 @@ class Resource(PolymorphicModel):
             if not self.last_updated.utcoffset:
                 return '%sZ' % iso8601
             return iso8601
+
+    @property
+    def csw_resourcetype(self):
+        return CSW_RESOURCE_TYPES[self.type]
 
     @property
     def keywords_csv(self):
@@ -201,7 +204,7 @@ class Service(Resource):
         """
         Check for availability of a service and provide run metrics.
         """
-        from utils import get_esri_service_name
+        from utils import get_esri_extent, get_esri_service_name
         success = True
         start_time = datetime.datetime.utcnow()
         message = ''
@@ -228,33 +231,35 @@ class Service(Resource):
                 title = ows.identification.title
                 abstract = ows.identification.abstract
                 keywords = ows.identification.keywords
-            if self.type == 'OGC:TMS':
+            if self.type == 'OSGeo:TMS':
                 ows = TileMapService(self.url)
                 title = ows.identification.title
                 abstract = ows.identification.abstract
                 keywords = ows.identification.keywords
             if self.type == 'ESRI:ArcGIS:MapServer':
                 esri = ArcMapService(self.url)
+                extent, srs = get_esri_extent(esri)
                 title = esri.mapName
                 if len(title) == 0:
                     title = get_esri_service_name(self.url)
-                srs = esri.fullExtent.spatialReference.wkid
-                wkt_geometry = bbox2wktpolygon([esri.fullExtent.xmin,
-                                                esri.fullExtent.ymin,
-                                                esri.fullExtent.xmax,
-                                                esri.fullExtent.ymax
-                                               ])
+                wkt_geometry = bbox2wktpolygon([
+                    extent['xmin'],
+                    extent['ymin'],
+                    extent['xmax'],
+                    extent['ymax']
+                ])
             if self.type == 'ESRI:ArcGIS:ImageServer':
                 esri = ArcImageService(self.url)
+                extent, srs = get_esri_extent(esri)
                 title = esri._json_struct['name']
                 if len(title) == 0:
                     title = get_esri_service_name(self.url)
-                srs = esri.fullExtent.spatialReference.wkid
-                wkt_geometry = bbox2wktpolygon([esri.fullExtent.xmin,
-                                                esri.fullExtent.ymin,
-                                                esri.fullExtent.xmax,
-                                                esri.fullExtent.ymax
-                                               ])
+                wkt_geometry = bbox2wktpolygon([
+                    extent['xmin'],
+                    extent['ymin'],
+                    extent['xmax'],
+                    extent['ymax']
+                ])
             if self.type == 'WM':
                 urllib2.urlopen(self.url)
                 title = 'Harvard WorldMap'
@@ -715,6 +720,8 @@ def create_metadata_record(**kwargs):
 
     etree.SubElement(e, nspath_eval('dc:identifier', nsmap)).text = kwargs['identifier']
     etree.SubElement(e, nspath_eval('dc:title', nsmap)).text = kwargs['title']
+    if 'alternative' in kwargs:
+        etree.SubElement(e, nspath_eval('dct:alternative', nsmap)).text = kwargs['alternative']
     etree.SubElement(e, nspath_eval('dct:modified', nsmap)).text = modified
     etree.SubElement(e, nspath_eval('dct:abstract', nsmap)).text = kwargs['abstract']
     etree.SubElement(e, nspath_eval('dc:type', nsmap)).text = kwargs['type']
@@ -753,7 +760,7 @@ def gen_anytext(*args):
         if term is not None:
             if isinstance(term, list):
                 for term2 in term:
-                    if term is not None:
+                    if term2 is not None:
                         bag.append(term2)
             else:
                 bag.append(term)

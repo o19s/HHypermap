@@ -84,7 +84,7 @@ def create_services_from_endpoint(url):
     if not detected:
         try:
             service = TileMapService(endpoint, timeout=10)
-            service_type = 'OGC:TMS'
+            service_type = 'OSGeo:TMS'
             detected = True
             create_service_from_endpoint(
                 endpoint,
@@ -215,6 +215,27 @@ def get_esri_service_name(url):
         return result.group(1)
 
 
+def get_esri_extent(esriobj):
+    """
+    Get the extent of an ESRI resource
+    """
+
+    extent = None
+    srs = None
+
+    if 'fullExtent' in esriobj._json_struct:
+        extent = esriobj._json_struct['fullExtent']
+    if 'extent' in esriobj._json_struct:
+        extent = esriobj._json_struct['extent']
+
+    try:
+        srs = extent['spatialReference']['wkid']
+    except KeyError as err:
+        pass  # TODO: logging
+
+    return [extent, srs]
+
+
 def flip_coordinates(c1, c2):
     if c1 > c2:
         print 'Flipping coordinates %s, %s' % (c1, c2)
@@ -291,7 +312,7 @@ def update_layers_wms(service):
             layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
             links.append([
                 'WWW:LINK',
-                 settings.SITE_URL.rstrip('/') + layer.page_url
+                settings.SITE_URL.rstrip('/') + layer.page_url
             ])
             # bbox
             bbox = list(ows_layer.boundingBoxWGS84 or (-179.0, -89.0, 179.0, 89.0))
@@ -316,6 +337,7 @@ def update_layers_wms(service):
                 type=layer.csw_type,
                 relation=service.id_string,
                 title=ows_layer.title,
+                alternative=ows_layer.name,
                 abstract=ows_layer.abstract,
                 keywords=ows_layer.keywords,
                 wkt_geometry=layer.wkt_geometry
@@ -348,7 +370,7 @@ def update_layers_wmts(service):
             layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
             links.append([
                 'WWW:LINK',
-                 settings.SITE_URL.rstrip('/') + layer.page_url
+                settings.SITE_URL.rstrip('/') + layer.page_url
             ])
             bbox = list(ows_layer.boundingBoxWGS84 or (-179.0, -89.0, 179.0, 89.0))
             layer.bbox_x0 = bbox[0]
@@ -364,6 +386,7 @@ def update_layers_wmts(service):
                 type=layer.csw_type,
                 relation=service.id_string,
                 title=ows_layer.title,
+                alternative=ows_layer.name,
                 abstract=layer.abstract,
                 keywords=ows_layer.keywords,
                 wkt_geometry=layer.wkt_geometry
@@ -466,7 +489,7 @@ def update_layers_warper(service):
         params = {'field': 'title', 'query': '', 'show_warped': '1', 'format': 'json', 'page': i}
         request = requests.get(service.url, headers=headers, params=params)
         records = json.loads(request.content)
-        print 'Fetched %s' + request.url
+        print 'Fetched %s' % request.url
         layers = records['items']
         for layer in layers:
             name = layer['id']
@@ -556,7 +579,7 @@ def update_layers_esri_mapserver(service):
                 layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
                 links.append([
                     'WWW:LINK',
-                     settings.SITE_URL.rstrip('/') + layer.page_url
+                    settings.SITE_URL.rstrip('/') + layer.page_url
                 ])
                 # set a default srs
                 srs = 4326
@@ -592,6 +615,7 @@ def update_layers_esri_mapserver(service):
                     type=layer.csw_type,
                     relation=service.id_string,
                     title=layer.title,
+                    alternative=layer.title,
                     abstract=layer.abstract,
                     wkt_geometry=layer.wkt_geometry,
                     srs=srs
@@ -622,7 +646,7 @@ def update_layers_esri_imageserver(service):
         layer.bbox_x1 = str(obj['extent']['xmax'])
         layer.bbox_y1 = str(obj['extent']['ymax'])
         layer.page_url = reverse('layer_detail', kwargs={'layer_id': layer.id})
-        srs = obj['spatialReference']['wkid']
+        srs = obj['extent']['spatialReference']['wkid']
         links.append([
             'WWW:LINK',
             settings.SITE_URL.rstrip('/') + layer.page_url
@@ -636,6 +660,7 @@ def update_layers_esri_imageserver(service):
             type=layer.csw_type,
             relation=service.id_string,
             title=layer.title,
+            alternative=layer.title,
             abstract=layer.abstract,
             wkt_geometry=layer.wkt_geometry,
             srs=srs

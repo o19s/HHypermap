@@ -1,5 +1,6 @@
 #!/bin/sh
 echo "------ Create database tables ------"
+python manage.py migrate auth
 python manage.py syncdb --noinput
 python manage.py collectstatic --noinput
 

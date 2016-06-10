@@ -1,8 +1,41 @@
 import os
 from distutils.core import setup
+from distutils.command.install import INSTALL_SCHEMES
 
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+
+def fullsplit(path, result=None):
+    """
+    Split a pathname into components (the opposite of os.path.join) in a
+    platform-neutral way.
+    """
+    if result is None:
+        result = []
+    head, tail = os.path.split(path)
+    if head == '':
+        return [tail] + result
+    if head == path:
+        return result
+    return fullsplit(head, [tail] + result)
+
+for scheme in INSTALL_SCHEMES.values():
+    scheme['data'] = scheme['purelib']
+
+packages, data_files = [], []
+root_dir = os.path.dirname(__file__)
+if root_dir != '':
+    os.chdir(root_dir)
+hypermap_dir = 'hypermap'
+
+for dirpath, dirnames, filenames in os.walk(hypermap_dir):
+    for i, dirname in enumerate(dirnames):
+        if dirname.startswith('.'):
+            del dirnames[i]
+    if '__init__.py' in filenames:
+        packages.append('.'.join(fullsplit(dirpath)))
+    elif filenames:
+        data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
 setup(
     name="HHyperMap",
@@ -11,16 +44,14 @@ setup(
     author_email="",
     description="HHyperMap",
     long_description=(read('README.md')),
-    # Full list of classifiers can be found at:
-    # http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 1 - Planning',
     ],
     license="BSD",
     keywords="hypermap django",
     url='https://github.com/cga-harvard/HHyperMap',
-    packages=['hypermap',],
-    include_package_data=True,
+    packages=packages,
+    data_files=data_files,
     zip_safe=False,
     install_requires=[
         'amqplib==1.0.2',

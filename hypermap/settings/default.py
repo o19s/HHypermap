@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 import os.path
 import sys
-from datetime import timedelta
 
 
 def str2bool(v):
@@ -138,13 +137,6 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_RESULT_BACKEND = 'cache+memcached://127.0.0.1:11211/'
 CELERYD_PREFETCH_MULTIPLIER = 25
 
-CELERYBEAT_SCHEDULE = {
-    'Check All Services': {
-        'task': 'check_all_services',
-        'schedule': timedelta(minutes=15)
-    },
-}
-
 CELERY_TIMEZONE = 'UTC'
 BROKER_URL = os.getenv('BROKER_URL', 'amqp://hypermap:hypermap@127.0.0.1:5672/hypermap')
 
@@ -225,7 +217,7 @@ PYCSW = {
         # authentication/authorization is handled by Django
         'transactions': 'false',
         'allowed_ips': '*',
-        # 'csw_harvest_pagesize=10',
+        # 'csw_harvest_pagesize': '10',
     },
     'repository': {
         'source': 'HHypermap',
@@ -258,3 +250,10 @@ PYCSW = {
         'contact_role': 'pointOfContact'
     }
 }
+
+# hypermap settings
+
+# if DEBUG_SERVICES is set to True, only first DEBUG_LAYERS_NUMBER layers
+# for each service are updated and checked
+DEBUG_SERVICES = str2bool(os.getenv('DEBUG_SERVICES', 'False'))
+DEBUG_LAYERS_NUMBER = int(os.getenv('DEBUG_LAYERS_NUMBER', '10'))

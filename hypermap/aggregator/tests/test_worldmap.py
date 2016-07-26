@@ -21,10 +21,9 @@ class TestWorldMap(unittest.TestCase):
         # create the service
         service = Service(
             type='Hypermap:WorldMap',
+            url='http://worldmap.harvard.edu/'
         )
         service.save()
-        # check url is correct
-        self.assertTrue(service.url, 'http://worldmap.harvard.edu/')
 
         # check title is correct
         self.assertTrue(service.title, 'Harvard WorldMap')
@@ -42,7 +41,7 @@ class TestWorldMap(unittest.TestCase):
         self.assertEqual(layer_0.layerwm.category, 'Rivers, Streams, Lakes')
         self.assertEqual(layer_0.layerwm.username, 'matt')
         self.assertEqual(layer_0.keywords.all().count(), 4)
-        self.assertEqual(layer_0.srs.all().count(), 3)
+        self.assertEqual(layer_0.service.srs.all().count(), 3)
         self.assertEqual(layer_0.check_set.all().count(), 1)
 
         # test dates #1
@@ -118,6 +117,7 @@ class TestWorldMap(unittest.TestCase):
         def create_duplicated_service():
             duplicated_service = Service(
                 type='Hypermap:WorldMap',
+                url='http://worldmap.harvard.edu/'
             )
             duplicated_service.save()
 

@@ -71,13 +71,9 @@ class ESHypermap(object):
                 maxX = bbox[2]
                 maxY = bbox[3]
                 if (minY > maxY):
-                    tmp = minY
-                    minY = maxY
-                    maxY = tmp
+                    minY, maxY = maxY, minY
                 if (minX > maxX):
-                    tmp = minX
-                    minX = maxX
-                    maxX = tmp
+                    minX, maxX = maxX, minX
                 centerY = (maxY + minY) / 2.0
                 centerX = (maxX + minX) / 2.0
                 halfWidth = (maxX - minX) / 2.0
@@ -153,7 +149,8 @@ class ESHypermap(object):
                     es_record['LayerDate'] = es_date
                     es_record['LayerDateType'] = type
                 ESHypermap.logger.info(es_record)
-                ESHypermap.es.index(ESHypermap.index_name, 'layer', json.dumps(es_record), id=layer.id)
+                ESHypermap.es.index(ESHypermap.index_name, 'layer', json.dumps(es_record), id=layer.id,
+                                    request_timeout=20)
                 ESHypermap.logger.info("Elasticsearch: record saved for layer with id: %s" % layer.id)
                 return True, None
         except Exception:

@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.conf import settings
 
-from celery import shared_task, chain
+from celery import shared_task
 
 
 @shared_task(bind=True)
@@ -38,6 +38,10 @@ def check_service(self, service):
     service.update_layers()
     # we count 1 for update_layers and 1 for service check for simplicity
     layer_to_process = service.layer_set.all()
+
+    if settings.DEBUG_SERVICES:
+        layer_to_process = layer_to_process[0:settings.DEBUG_LAYERS_NUMBER]
+
     total = layer_to_process.count() + 2
     status_update(1)
     service.check_available()
@@ -45,13 +49,11 @@ def check_service(self, service):
     count = 3
 
     if not settings.SKIP_CELERY_TASK:
-        tasks = []
         for layer in layer_to_process:
             # update state
             status_update(count)
-            tasks.append(check_layer.si(layer))
+            check_layer.delay(layer)
             count += 1
-        chain(tasks)()
     else:
         for layer in layer_to_process:
             status_update(count)
@@ -63,6 +65,12 @@ def check_service(self, service):
 def check_layer(self, layer):
     print 'Checking layer %s' % layer.name
     success, message = layer.check_available()
+    # every time a layer is checked it should be indexed
+    if success and settings.SEARCH_ENABLED:
+        if not settings.SKIP_CELERY_TASK:
+            index_layer.delay(layer)
+        else:
+            index_layer(layer)
     if not success:
         from hypermap.aggregator.models import TaskError
         task_error = TaskError(
@@ -175,8 +183,8 @@ def index_layer(self, layer):
 def index_all_layers(self):
     from hypermap.aggregator.models import Layer
 
-    if settings.SERVICE_TYPE == 'elasticsearch':
-        clear_es()
+    # if settings.SERVICE_TYPE == 'elasticsearch':
+    #    clear_es()
 
     layer_to_processes = Layer.objects.all()
     total = layer_to_processes.count()
@@ -213,14 +221,8 @@ def update_endpoints(self, endpoint_list):
     total = endpoint_to_process.count()
     count = 0
     if not settings.SKIP_CELERY_TASK:
-        # the task workflow must be a group of serials requests to each endpoint.
-        # The celery chains links together signatures so that one is called after the other.
-        tasks = []
         for endpoint in endpoint_to_process:
-            # use immutable signatures, we dont want the result of the previous
-            # task in the celery chain for the next task.
-            tasks.append(update_endpoint.si(endpoint))
-        chain(tasks)()
+            update_endpoint.delay(endpoint)
         # update state
         if not self.request.called_directly:
             self.update_state(

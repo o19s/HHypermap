@@ -1,12 +1,4 @@
-FROM python:2.7.9
+FROM terranodo/django:development
+MAINTAINER Ariel Núñez<ariel@terranodo.io>                                                                                       
 
-RUN apt-get -y update
 
-RUN apt-get install -y python-shapely
-
-RUN mkdir /code
-WORKDIR /code
-
-ADD . /code
-
-RUN pip install -e /code

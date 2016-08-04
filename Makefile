@@ -1,7 +1,10 @@
-.PHONY: hypermap
 up:
 	# bring up the services
 	docker-compose up -d
+
+build:
+	docker-compose build django
+	docker-compose build celery
 
 sync:
 	# set up the database tables
@@ -14,6 +17,8 @@ sync:
 logs:
 	docker-compose logs --follow
 
-.PHONY: clean
 down:
 	docker-compose down
+
+test:
+	docker-compose run django python manage.py test hypermap.aggregator --settings=hypermap.settings.test --failfast

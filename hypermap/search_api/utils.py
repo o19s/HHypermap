@@ -11,49 +11,42 @@ from shapely.geometry import box
 
 def is_range_common_era(start, end):
     """
-    does the range contains CE dates.
+    Tests if the range contains CE dates.
     BCE and CE are not compatible at the moment.
     :param start:
     :param end:
-    :return: False if contains BCE dates.
+    :return: False if either start or end are BCE dates.
     """
     return all([start.get("is_common_era"),
                 end.get("is_common_era")])
 
 def parse_datetime(date_str):
     """
-    Parses a date string to date object.
-    for BCE dates, only supports the year part.
+    Parses a date string into a CE check, and a date string.
+    Only years are supported for BCE dates.
+
+    :return: tuple with is_common_era, parsed_datetime
     """
-    is_common_era = True
+
     date_str_parts = date_str.split("-")
-    if date_str_parts and date_str_parts[0] == '':
-        is_common_era = False
+
+    if date_str_parts and date_str_parts[0] == '' and len(date_str_parts) == 2:
         # for now, only support BCE years
 
         # assume the datetime comes complete, but
         # when it comes only the year, add the missing datetime info:
-        if len(date_str_parts) == 2:
-            date_str = date_str + "-01-01T00:00:00Z"
 
-    parsed_datetime = {
-        'is_common_era': is_common_era,
-        'parsed_datetime': None
-    }
+        return False, date_str + "-01-01T00:00:00Z"
 
-    if is_common_era:
-        if date_str == '*':
-            return parsed_datetime  # open ended.
+    if date_str == '*':
+        return True, None  # open ended.
 
-        default = datetime.datetime.now().replace(
-            hour=0, minute=0, second=0, microsecond=0,
-            day=1, month=1
-        )
-        parsed_datetime['parsed_datetime'] = parse(date_str, default=default)
-        return parsed_datetime
+    default = datetime.datetime.now().replace(
+        hour=0, minute=0, second=0, microsecond=0,
+        day=1, month=1
+    )
 
-    parsed_datetime['parsed_datetime'] = date_str
-    return parsed_datetime
+    return True, parse(date_str, default=default)
 
 
 def parse_solr_time_range_as_pair(time_filter):
@@ -88,20 +81,18 @@ def parse_datetime_range(time_filter):
 
 def parse_datetime_range_to_solr(time_filter):
     start, end = parse_datetime_range(time_filter)
-    left = "*"
-    right = "*"
 
-    if start.get("parsed_datetime"):
-        left = start.get("parsed_datetime")
-        if start.get("is_common_era"):
-            left = start.get("parsed_datetime").isoformat().replace("+00:00", "") + 'Z'
+    def output_datestring(input):
+        is_common_era, datetime = input
 
-    if end.get("parsed_datetime"):
-        right = end.get("parsed_datetime")
-        if end.get("is_common_era"):
-            right = end.get("parsed_datetime").isoformat().replace("+00:00", "") + 'Z'
+        if datetime and is_common_era:
+            return datetime.isoformat().replace("+00:00", "") + 'Z'
+        elif datetime:
+            return datetime
+        else:
+            return "*"
 
-    return "[{0} TO {1}]".format(left, right)
+    return "[{0} TO {1}]".format(output_datestring(start), output_datestring(end))
 
 
 def parse_ISO8601(time_gap):
@@ -162,7 +153,7 @@ def compute_gap(start, end, time_limit):
         # those dates are relatively big, so 100 years are reasonable in those cases.
         # TODO: calculate duration on those cases.
         return "+100YEARS"
-        
+
 def gap_to_elastic(time_gap):
     ##elastic units link: https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#time-units
      elastic_units = {
@@ -310,7 +301,6 @@ def request_heatmap_facet(field, hm_filter, hm_grid_level, hm_limit):
 
 def request_field_facet(field, limit, ex_filter=True):
     pass
-
 
 def asterisk_to_min_max(field, time_filter, search_engine_endpoint, actual_params=None):
     """

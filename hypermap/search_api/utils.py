@@ -170,7 +170,7 @@ def gap_to_elastic(time_gap):
      return interval
 
 
-def gap_to_sorl(time_gap):
+def gap_to_solr(time_gap):
     """
     P1D to +1DAY
     :param time_gap:
@@ -204,7 +204,7 @@ def request_time_facet(field, time_filter, time_gap, time_limit=100):
     key_range_mincount = "f.{0}.facet.mincount".format(field)
 
     if time_gap:
-        gap = gap_to_sorl(time_gap)
+        gap = gap_to_solr(time_gap)
     else:
         gap = compute_gap(start, end, time_limit)
 

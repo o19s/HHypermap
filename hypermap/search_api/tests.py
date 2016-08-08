@@ -66,8 +66,8 @@ class SearchApiTestCase(TestCase):
         self.assertEqual(quantity, 3)
         self.assertEqual(units[0], "DAYS")
 
-    def test_gap_to_sorl(self):
-        value = utils.gap_to_sorl("P3D")
+    def test_gap_to_solr(self):
+        value = utils.gap_to_solr("P3D")
         self.assertEqual(value, "+3DAYS")
 
     def test_parse_geo_box(self):

@@ -177,6 +177,16 @@ class ESHypermap(object):
         # TODO: enable auto_create_index in the ES nodes to make this implicit.
         # https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#index-creation
         # http://support.searchly.com/customer/en/portal/questions/16312889-is-automatic-index-creation-disabled-?new=16312889
+
+        # In order to calculate the top terms in one field both the title and abstract fields are
+        # copied to a field called top_terms so that a custom analyzer can be used
+
+        # The letters_only tokenizer looks for anything that is not a letter (a-z)
+        # and uses that to split out the tokens. Once tokens are generated, we then lowercase
+        # each value and remove a list of stopwords. "_english_" removes a predefined list of common
+        # stopwords such as "a", "and", and "the"
+        # The stopwords could be split out into a separarate stopwords file
+
         mapping = {
             "settings": {
                 "analysis": {

@@ -178,13 +178,61 @@ class ESHypermap(object):
         # https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#index-creation
         # http://support.searchly.com/customer/en/portal/questions/16312889-is-automatic-index-creation-disabled-?new=16312889
         mapping = {
+            "settings": {
+                "analysis": {
+                    "filter": {
+                        "stopwords": {
+                            "type": "stop",
+                            "stopwords": [
+                                "_english_",
+                                "been",
+                                "com",
+                                "from",
+                                "http",
+                                "including",
+                                "were",
+                                "which",
+                                "while",
+                                "www"
+                            ]
+                        }
+                    },
+                    "tokenizer": {
+                        "letters_only": {
+                            "type": "pattern",
+                            "pattern": "[^a-zA-Z]+"
+                        }
+                    },
+                    "analyzer": {
+                        "top_terms_analyzer": {
+                            "tokenizer": "letters_only",
+                            "filter": [
+                                "lowercase",
+                                "stopwords"
+                            ]
+                        }
+                    }
+                }
+            },
             "mappings": {
                 "layer": {
                     "properties": {
+                        "top_terms": {
+                            "type": "string",
+                            "analyzer": "top_terms_analyzer"
+                        },
                         "layer_geoshape": {
                             "type": "geo_shape",
                             "tree": "quadtree",
                             "precision": SEARCH_MAPPING_PRECISION
+                        },
+                        "abstract": {
+                            "type": "string",
+                            "copy_to": "top_terms"
+                        },
+                        "title": {
+                            "type": "string",
+                            "copy_to": "top_terms"
                         }
                     }
                 }

@@ -158,25 +158,24 @@ def elasticsearch(serializer, catalog):
             return {"error": {"msg": msg}}
 
     if a_text_limit:
-        # getting most frequently occurring users.
-        text_limit = {
+        # getting most frequently occurring abstract terms.
+        terms_aggregation = {
             "terms": {
-                "field": "abstract",
+                "field": "top_terms",
                 "size": a_text_limit
             }
         }
-        aggs_dic['popular_text'] = text_limit
+        aggs_dic['popular_text'] = terms_aggregation
 
     if a_user_limit:
         # getting most frequently occurring users.
-        users_limit = {
-
+        users_aggregation = {
             "terms": {
                 "field": "layer_originator",
                 "size": a_user_limit
             }
         }
-        aggs_dic['popular_users'] = users_limit
+        aggs_dic['popular_users'] = users_aggregation
 
     if a_time_limit:
         ### Work in progress
@@ -248,7 +247,7 @@ def elasticsearch(serializer, catalog):
                 a_users_list_array.append(temp)
             data["a.user"] = a_users_list_array
 
-        # getting most frequently ocurring words
+        # getting most frequently ocurring terms
         if 'popular_text' in aggs:
             a_text_list_array = []
             text_resp = es_response["aggregations"]["popular_text"]["buckets"]
@@ -285,7 +284,7 @@ def elasticsearch(serializer, catalog):
             data['a.time'] = a_gap
 
         if 'range' in aggs:
-            ### Work in progress 
+            ### Work in progress
             # Pay attention in the following code lines: Make it better!!!!
             time_count = []
             time_resp = aggs["range"]["buckets"]
@@ -565,4 +564,3 @@ class Search(APIView):
 class CatalogViewSet(ModelViewSet):
     queryset = Catalog.objects.all()
     serializer_class = CatalogSerializer
-

@@ -162,6 +162,7 @@ def elasticsearch(serializer, catalog):
         terms_aggregation = {
             "terms": {
                 "field": "top_terms",
+        		"include" : ".{3,}", # Only returns terms that have at least 3 chars
                 "size": a_text_limit
             }
         }
